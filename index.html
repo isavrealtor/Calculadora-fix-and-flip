@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Fix & Flip — Isabel Pirela</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1F3C;
+    --navy-mid: #162d52;
+    --gold: #C9A84C;
+    --gold-light: #e8c96e;
+    --gold-pale: #FBF5E6;
+    --cream: #F7F4EE;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e0dbd0;
+    --surface: #ffffff;
+    --green: #1B6B3A;
+    --green-bg: #E8F5EE;
+    --green-border: #9DD5B5;
+    --red: #8B2020;
+    --red-bg: #FDECEA;
+    --red-border: #F5A8A8;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--navy);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+  }
+
+  .brand-title {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .header-cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--navy);
+    text-decoration: none;
+    padding: 0.6rem 1.1rem;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+  }
+
+  .header-cta:hover { background: var(--gold-light); }
+
+  .wa-icon {
+    width: 16px;
+    height: 16px;
+    fill: var(--navy);
+    flex-shrink: 0;
+  }
+
+  /* HERO STRIP */
+  .hero {
+    background: var(--navy-mid);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 12px;
+    color: #a8b8cc;
+    letter-spacing: 0.04em;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  /* ARV INPUT */
+  .arv-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    background: var(--gold-pale);
+    overflow: hidden;
+    max-width: 300px;
+  }
+
+  .arv-prefix {
+    padding: 0 14px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--gold);
+    border-right: 1px solid #ddd0a8;
+    background: transparent;
+    height: 52px;
+    display: flex;
+    align-items: center;
+  }
+
+  .arv-input {
+    border: none;
+    background: transparent;
+    padding: 0 14px;
+    font-size: 20px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--navy);
+    width: 100%;
+    height: 52px;
+    outline: none;
+  }
+
+  .arv-input::placeholder { color: #bfad84; }
+
+  /* SLIDERS */
+  .slider-row { margin-bottom: 1.75rem; }
+
+  .slider-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .slider-name {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .slider-val {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--navy);
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  .slider-hints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  /* OPCIONES GRID */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .option-card {
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .toggle-label {
+    font-size: 11px;
+    color: var(--text);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #ddd;
+    border-radius: 11px;
+    transition: background 0.2s;
+  }
+
+  .toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+
+  .toggle input:checked + .toggle-slider { background: var(--gold); }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+  .option-note {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* INLINE INPUTS */
+  .input-row { margin-bottom: 1rem; }
+
+  .input-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .input-with-unit {
+    display: flex;
+    align-items: center;
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    overflow: hidden;
+    max-width: 180px;
+  }
+
+  .unit-badge {
+    padding: 0 10px;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--cream);
+    border-right: 0.5px solid var(--border);
+    height: 38px;
+    display: flex;
+    align-items: center;
+  }
+
+  .unit-badge.right {
+    border-right: none;
+    border-left: 0.5px solid var(--border);
+  }
+
+  .inline-input {
+    border: none;
+    background: transparent;
+    padding: 0 10px;
+    font-size: 14px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    width: 100%;
+    height: 38px;
+    outline: none;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 1.75rem 0;
+  }
+
+  /* BREAKDOWN */
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 7px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-label { color: var(--muted); }
+  .breakdown-val { color: var(--text); font-weight: 500; }
+
+  .breakdown-total .breakdown-label {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .breakdown-total .breakdown-val { font-size: 14px; }
+
+  /* PROFIT BOX */
+  .profit-box {
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: background 0.3s, border-color 0.3s;
+    margin-top: 1rem;
+  }
+
+  .profit-box.positive { background: var(--green-bg); border-color: var(--green-border); }
+  .profit-box.negative { background: var(--red-bg); border-color: var(--red-border); }
+
+  .profit-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .profit-label.positive { color: var(--green); }
+  .profit-label.negative { color: var(--red); }
+
+  .profit-amount {
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .profit-amount.positive { color: var(--green); }
+  .profit-amount.negative { color: var(--red); }
+
+  .profit-roi { font-size: 11px; }
+  .profit-roi.positive { color: #2D8A54; }
+  .profit-roi.negative { color: #A83030; }
+
+  /* FOOTER */
+  .site-footer {
+    background: var(--navy);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .footer-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .footer-title {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: var(--navy);
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: background 0.2s;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-wa:hover { background: var(--gold-light); }
+
+  .footer-disclaimer {
+    font-size: 10px;
+    color: #4a6080;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 520px) {
+    .site-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .options-grid { grid-template-columns: 1fr; }
+    .card { padding: 1.25rem; }
+    .hero { padding: 2rem 1.25rem 1.5rem; }
+    .profit-amount { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="brand">
+    <span class="brand-name">Isabel Pirela</span>
+    <span class="brand-title">Realtor · Nashville, TN</span>
+  </div>
+  <a class="header-cta" href="https://wa.me/16153756286" target="_blank" rel="noopener">
+    <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    Escríbeme
+  </a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Herramienta gratuita</p>
+  <h1 class="hero-title">Calculadora <em>Fix &amp; Flip</em></h1>
+  <p class="hero-sub">Estima tu rentabilidad en segundos · Nashville Metro Area</p>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- CARD 1: ARV + Sliders -->
+  <div class="card">
+    <p class="card-title">Datos del deal</p>
+
+    <div class="slider-row">
+      <div class="slider-top">
+        <span class="slider-name">ARV — Valor después de reparaciones</span>
+      </div>
+      <div class="arv-wrap">
+        <span class="arv-prefix">$</span>
+        <input type="number" class="arv-input" id="arv-input" value="230000" min="0" step="1000" placeholder="ej. 230000">
+      </div>
+    </div>
+
+    <hr class="divider" style="margin-top: 1.25rem;">
+
+    <div class="slider-row">
+      <div class="slider-top">
+        <span class="slider-name">Precio de compra</span>
+        <span class="slider-val" id="purchase-display">$120,000</span>
+      </div>
+      <input type="range" id="purchase-slider" min="50000" max="600000" step="5000" value="120000">
+      <div class="slider-hints"><span>$50k</span><span>$600k</span></div>
+    </div>
+
+    <div class="slider-row">
+      <div class="slider-top">
+        <span class="slider-name">Costo de rehabilitación</span>
+        <span class="slider-val" id="rehab-display">$45,000</span>
+      </div>
+      <input type="range" id="rehab-slider" min="5000" max="200000" step="5000" value="45000">
+      <div class="slider-hints"><span>$5k</span><span>$200k</span></div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Opciones -->
+  <div class="card">
+    <p class="card-title">Costos adicionales</p>
+
+    <div class="options-grid">
+      <div class="option-card">
+        <div class="toggle-row">
+          <span class="toggle-label">Financiamiento</span>
+          <label class="toggle">
+            <input type="checkbox" id="financed-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-note" id="finance-note">Apagado — cierre 1% ARV (cash)</div>
+      </div>
+      <div class="option-card">
+        <div class="toggle-row">
+          <span class="toggle-label">Holding costs</span>
+          <label class="toggle">
+            <input type="checkbox" id="holding-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-note" id="holding-note">Activo — 1.5% × compra / mes</div>
+      </div>
+    </div>
+
+    <div id="holding-months-row" class="input-row">
+      <label class="input-label">Meses de holding</label>
+      <div class="input-with-unit">
+        <input type="number" class="inline-input" id="holding-months" value="4" min="1" max="24" step="1">
+        <span class="unit-badge right">meses</span>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <label class="input-label">Costos de venta (% del ARV)</label>
+      <div class="input-with-unit">
+        <input type="number" class="inline-input" id="selling-pct" value="8" min="0" max="20" step="0.5">
+        <span class="unit-badge right">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: Resultados -->
+  <div class="card">
+    <p class="card-title">Resumen del deal</p>
+
+    <div class="breakdown-row">
+      <span class="breakdown-label">Precio de compra</span>
+      <span class="breakdown-val" id="r-purchase">—</span>
+    </div>
+    <div class="breakdown-row">
+      <span class="breakdown-label">Rehabilitación</span>
+      <span class="breakdown-val" id="r-rehab">—</span>
+    </div>
+    <div class="breakdown-row">
+      <span class="breakdown-label" id="r-closing-label">Costos de cierre (1% ARV — cash)</span>
+      <span class="breakdown-val" id="r-closing">—</span>
+    </div>
+    <div class="breakdown-row" id="r-finance-row" style="display:none">
+      <span class="breakdown-label">Costo de financiamiento (3% ARV)</span>
+      <span class="breakdown-val" id="r-finance">—</span>
+    </div>
+    <div class="breakdown-row" id="r-holding-row">
+      <span class="breakdown-label">Holding costs</span>
+      <span class="breakdown-val" id="r-holding">—</span>
+    </div>
+    <div class="breakdown-row">
+      <span class="breakdown-label">Costos de venta</span>
+      <span class="breakdown-val" id="r-selling">—</span>
+    </div>
+    <div class="breakdown-row breakdown-total" style="border-top: 1px solid var(--border); margin-top: 6px; padding-top: 10px;">
+      <span class="breakdown-label">Costo total</span>
+      <span class="breakdown-val" id="r-total">—</span>
+    </div>
+    <div class="breakdown-row">
+      <span class="breakdown-label">Precio de venta (ARV)</span>
+      <span class="breakdown-val" id="r-arv">—</span>
+    </div>
+
+    <div class="profit-box positive" id="profit-box">
+      <div>
+        <div class="profit-label positive" id="profit-label">Ganancia proyectada</div>
+        <div class="profit-roi positive" id="profit-roi">ROI sobre lo invertido: —</div>
+      </div>
+      <div class="profit-amount positive" id="profit-amount">—</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p class="footer-name">Isabel Pirela</p>
+  <p class="footer-title">Realtor · Nashville, TN</p>
+  <a class="footer-wa" href="https://wa.me/16153756286" target="_blank" rel="noopener">
+    <svg style="width:18px;height:18px;fill:#0D1F3C;" viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    WhatsApp: 615 375 6286
+  </a>
+  <p class="footer-disclaimer">Esta calculadora es una herramienta de estimación orientativa. Los números reales pueden variar según las condiciones del mercado, el estado de la propiedad y otros factores. Consulta con un profesional antes de tomar decisiones de inversión.</p>
+</footer>
+
+<script>
+  const fmt = v => '$' + Math.round(v).toLocaleString('en-US');
+
+  function calc() {
+    const purchase = +document.getElementById('purchase-slider').value;
+    const rehab = +document.getElementById('rehab-slider').value;
+    const arv = +document.getElementById('arv-input').value || 0;
+    const financed = document.getElementById('financed-toggle').checked;
+    const holdingOn = document.getElementById('holding-toggle').checked;
+    const months = +document.getElementById('holding-months').value || 0;
+    const sellingPct = +document.getElementById('selling-pct').value || 0;
+
+    document.getElementById('purchase-display').textContent = fmt(purchase);
+    document.getElementById('rehab-display').textContent = fmt(rehab);
+
+    // Closing: 1% ARV always (cash). If financed, replace with 3% (not additive).
+    const closingCost = financed ? 0 : arv * 0.01;
+    const financeCost = financed ? arv * 0.03 : 0;
+    const holdingCost = holdingOn ? purchase * 0.015 * months : 0;
+    const sellingCost = arv * (sellingPct / 100);
+
+    const total = purchase + rehab + closingCost + financeCost + holdingCost + sellingCost;
+    const profit = arv - total;
+
+    document.getElementById('r-purchase').textContent = fmt(purchase);
+    document.getElementById('r-rehab').textContent = fmt(rehab);
+
+    const closingLabel = document.getElementById('r-closing-label');
+    const closingVal = document.getElementById('r-closing');
+    const finRow = document.getElementById('r-finance-row');
+
+    if (financed) {
+      closingLabel.textContent = 'Costos de cierre (incluidos en financiamiento)';
+      closingVal.textContent = '—';
+      finRow.style.display = 'flex';
+      document.getElementById('r-finance').textContent = arv > 0 ? fmt(financeCost) : '—';
+    } else {
+      closingLabel.textContent = 'Costos de cierre (1% ARV — cash)';
+      closingVal.textContent = arv > 0 ? fmt(closingCost) : '—';
+      finRow.style.display = 'none';
+    }
+
+    const holdRow = document.getElementById('r-holding-row');
+    holdRow.style.display = holdingOn ? 'flex' : 'none';
+    document.getElementById('r-holding').textContent = holdingOn ? fmt(holdingCost) : '—';
+
+    document.getElementById('r-selling').textContent = arv > 0 ? fmt(sellingCost) : '—';
+    document.getElementById('r-total').textContent = arv > 0 ? fmt(total) : '—';
+    document.getElementById('r-arv').textContent = arv > 0 ? fmt(arv) : '—';
+
+    if (arv <= 0) return;
+
+    const box = document.getElementById('profit-box');
+    const lbl = document.getElementById('profit-label');
+    const roi = document.getElementById('profit-roi');
+    const amt = document.getElementById('profit-amount');
+    const isPos = profit >= 0;
+
+    box.className = 'profit-box ' + (isPos ? 'positive' : 'negative');
+    lbl.className = 'profit-label ' + (isPos ? 'positive' : 'negative');
+    lbl.textContent = isPos ? 'Ganancia proyectada' : 'Pérdida proyectada';
+    amt.className = 'profit-amount ' + (isPos ? 'positive' : 'negative');
+    amt.textContent = (isPos ? '' : '–') + fmt(Math.abs(profit));
+    roi.className = 'profit-roi ' + (isPos ? 'positive' : 'negative');
+    const roiPct = (purchase + rehab) > 0 ? ((profit / (purchase + rehab)) * 100).toFixed(1) : 0;
+    roi.textContent = 'ROI sobre lo invertido: ' + roiPct + '%';
+  }
+
+  document.getElementById('arv-input').addEventListener('input', calc);
+  document.getElementById('purchase-slider').addEventListener('input', calc);
+  document.getElementById('rehab-slider').addEventListener('input', calc);
+
+  document.getElementById('financed-toggle').addEventListener('change', function() {
+    document.getElementById('finance-note').textContent = this.checked
+      ? 'Activo — 3% del ARV (incluye cierre)'
+      : 'Apagado — cierre 1% ARV (cash)';
+    calc();
+  });
+
+  document.getElementById('holding-toggle').addEventListener('change', function() {
+    document.getElementById('holding-months-row').style.display = this.checked ? 'block' : 'none';
+    document.getElementById('holding-note').textContent = this.checked
+      ? 'Activo — 1.5% × compra / mes'
+      : 'Apagado';
+    calc();
+  });
+
+  document.getElementById('selling-pct').addEventListener('input', calc);
+  document.getElementById('holding-months').addEventListener('input', calc);
+
+  calc();
+</script>
+</body>
+</html>
